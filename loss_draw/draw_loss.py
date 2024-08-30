@@ -9,8 +9,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
-LOG_RE = r"Epoch (\d+/\d+).*?Iter: (\d+/\d+).*?lr\(PiecewiseDecay\): ([\d.]+).*?top1: ([\d.]+).*?top5: ([\d.]+).*?CELoss: ([\d.]+).*?loss: ([\d.]+).*?batch_cost: ([\d.]+)s.*?ips: ([\d.]+).*?eta: (\d+:\d+:\d+)"
-LOSS_RE = r"loss: ([\d.]+)"
+# LOG_RE = r"Epoch (\d+/\d+).*?Iter: (\d+/\d+).*?lr\(PiecewiseDecay\): ([\d.]+).*?top1: ([\d.]+).*?top5: ([\d.]+).*?CELoss: ([\d.]+).*?loss: ([\d.]+).*?batch_cost: ([\d.]+)s.*?ips: ([\d.]+).*?eta: (\d+:\d+:\d+)"
+# LOSS_RE = r"loss: ([\d.]+)"
+LOG_RE = r"\'loss\':  ([\d.]+)"
+LOSS_RE = r"\'loss\':  ([\d.]+)"
 # 如果需要其他模块，可以在这里继续导入
 
 def check_string(re_exp, str):
@@ -68,7 +70,7 @@ def main():
     主程序入口。
     """
     # 在这里添加调用 draw_loss_function 的代码，以及可能的其他逻辑
-    loss = Read_file('train_256.log')
+    loss = Read_file('finetune_full.log')
     # loss = loss[:250]
     draw_loss_function(loss)
 

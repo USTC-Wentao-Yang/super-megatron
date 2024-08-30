@@ -91,7 +91,12 @@ def average_gradient(model):
         dist.all_reduce(param.grad.data, op=dist.reduce_op.SUM)
         param.grad.data /= world_size
 
-def run(rank, siz, loop=100, seed=1):
+def ddp_setup():
+    dist.init_process_group(backend="nccl")
+
+def run(loop=100, seed=1):
+    ddp_setup()
+    rank = int(os.environ['LOCAL_RANK'])
     torch.manual_seed(seed)
     train_set, pbs = partition_dataset()
     model = Net()
@@ -121,13 +126,6 @@ def run(rank, siz, loop=100, seed=1):
         logger.info("Save parameters to model_weight.pth.")
         torch.save(model.state_dict(), "model_weight.pth")
 
-def init_processes(rank, world_size, loop, fn, backend='nccl'):
-    os.environ['MASTER_ADDR'] = '127.0.0.1'
-    os.environ['MASTER_PORT'] = '29500'
-    dist.init_process_group(backend=backend, rank=rank, world_size=world_size)
-    logger.info(f'Rank {rank} inited.')
-    fn(rank, world_size, loop)
-
 def Train_parse():
     parser = argparse.ArgumentParser(description="Train parser.")
     parser.add_argument('--iterations', type=int, default=100)
@@ -137,13 +135,11 @@ def Train_parse():
 
 
 if __name__ == "__main__":
+
     world_size = 4
     processes = []
     args = Train_parse()
-    for rank in range(world_size):
-        p = Process(target=init_processes, args=(rank, world_size, args.iterations, run))
-        p.start()
-        processes.append(p)
-    for p in processes:
-        p.join()
+    logger.info("master addr:" + str(os.environ["MASTER_ADDR"]))
+    run(args.iterations)
+    dist.destroy_process_group()
 
