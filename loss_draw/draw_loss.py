@@ -70,7 +70,7 @@ def main():
     主程序入口。
     """
     # 在这里添加调用 draw_loss_function 的代码，以及可能的其他逻辑
-    loss = Read_file('finetune_full.log')
+    loss = Read_file('llama-7b.log')
     # loss = loss[:250]
     draw_loss_function(loss)
 
