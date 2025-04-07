@@ -11,5 +11,3 @@ import torch.optim as optim
 import datatime
 
 from torch.nn.parallel import DistributedDataParallel as DDP
-
-class ToyMode
